@@ -1,0 +1,11 @@
+__pycache__/
+*.pyc
+.pytest_cache/
+.venv/
+venv/
+wandb/
+results/
+results_table.md
+mne_data/
+*.zip
+.DS_Store
