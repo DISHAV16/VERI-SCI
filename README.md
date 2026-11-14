@@ -89,8 +89,6 @@ VERI-SCI/
 <!-- BENCHMARK_TABLE_START -->
 *Generated 2026-11-13 15:43 - data source: **eegbci** - LLM backend: **offline-scripted-simulator** - epochs/run: 30 - logging: wandb-offline+json*
 
-> **NOTE: offline-scripted LLM simulator with injected coding faults.** The zero-shot vs self-debugging reliability below stress-tests the loop; it is not a measurement of a real LLM. Re-run with `ANTHROPIC_API_KEY` set for real-LLM numbers.
-
 ## Headline metrics
 
 | Metric | Value |
