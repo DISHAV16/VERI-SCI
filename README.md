@@ -1,5 +1,5 @@
 # VERI-SCI
-
+ 
 **Self-Verifying Autonomous Research Agent & Leakage Auditor for Neural Signal Modeling** 
 
 *UN SDG 9 (Industry, Innovation & Infrastructure: t rustworthy AI research infrastructure) and SDG 3 (Good Health: reliable neural-signal modelling).*
