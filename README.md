@@ -45,39 +45,19 @@ How the contract is enforced:
   
 ## Statistical methodology
 
-Unit of analysis = **subject** ($n = 5$ LOSO folds). Seeds are averaged within each subject first:
+Unit of analysis = **subject** ($`n = 5`$ LOSO folds). Seeds are averaged within each subject first ($`\bar{F}_i = \frac{1}{S}\sum_{s=1}^{S} F_{s,i}`$).
 
-$$\bar{F}_i = \frac{1}{S}\sum_{s=1}^{S} F_{s,i}$$
+* **Macro-F1:** $`F_1 = \frac{1}{2}\sum_{c \in \{0,1\}} \frac{2 P_c R_c}{P_c + R_c}`$
+* **Paired difference per subject:** $`d_i = \bar{F}_{i}^{\text{cand}} - \bar{F}_{i}^{\text{base}}`$, with sample mean $`\bar{d}`$ and standard deviation $`s_d`$.
+* **Paired t-test (gating test):** $`t = \frac{\bar{d}}{s_d / \sqrt{n}}`$, $`\nu = n - 1`$
+* **Cohen's effect size (paired):** $`d_z = \bar{d} / s_d \ge 0.5`$ required.
+* **95% Confidence Interval (must exclude $`0`$):** $`\bar{d} \pm t_{0.975,\, n-1} \frac{s_d}{\sqrt{n}}`$
+* **Holm-Bonferroni correction over $`m`$ hypotheses** (must be $`< 0.05`$; crashed candidates remain in the family with $`p = 1`$): $`p^{\text{adj}}_{(i)} = \max_{j \le i} \min(1,\, (m - j + 1)\, p_{(j)})`$
+* **Variance decomposition:** $`\sigma^2_{\text{seed}} = \frac{1}{n}\sum_{i=1}^{n} \mathrm{Var}_{\text{seeds}}(F_{s,i})`$ vs. $`\sigma^2_{\text{subject}} = \mathrm{Var}_{i}(\bar{F}_i)`$. The mean improvement $`\bar{d}`$ must also exceed the combined seed noise floor: $`\bar{d} > \sqrt{\sigma^2_{\text{seed,cand}} + \sigma^2_{\text{seed,base}}}`$.
+* **Wilcoxon signed-rank:** Reported for reference but **not gating**, because at $`n = 5`$ subjects its minimum exact two-sided $`p`$-value is $`0.0625`$.
 
-* **Macro-F1:**
+Provenance checks (hard fail): LOSO protocol with disjoint subjects, no fitted statistic touching the test subject, $`\ge 3`$ explicit distinct seeds, reported seeds equal executed seeds, reported mean not above recorded mean, and a bit-exact replay of one run.
 
-$$F_1 = \frac{1}{2}\sum_{c \in \{0,1\}} \frac{2 P_c R_c}{P_c + R_c}$$
-
-* **Paired difference per subject:** $d_i = \bar{F}^{\text{cand}}_i - \bar{F}^{\text{base}}_i$, with sample mean $\bar{d}$ and standard deviation $s_d$.
-* **Paired t-test (gating test):**
-
-$$t = \frac{\bar{d}}{s_d / \sqrt{n}}, \qquad \nu = n - 1$$
-
-* **Cohen's effect size (paired):** $d_z = \bar{d} / s_d \ge 0.5$ required.
-* **95% Confidence Interval (must exclude $0$):**
-
-$$\bar{d} \pm t_{0.975,\, n-1} \frac{s_d}{\sqrt{n}}$$
-
-* **Holm-Bonferroni correction over $m$ hypotheses** (must be $< 0.05$; crashed candidates remain in the family with $p = 1$):
-
-$$p^{\text{adj}}_{(i)} = \max_{j \le i} \min\left\{1,\; (m - j + 1)\, p_{(j)}\right\}$$
-
-* **Variance decomposition:**
-
-$$\sigma^2_{\text{seed}} = \frac{1}{n}\sum_{i=1}^{n} \mathrm{Var}_{\text{seeds}}(F_{s,i}), \qquad \sigma^2_{\text{subject}} = \mathrm{Var}_{i}(\bar{F}_i)$$
-
-  The mean improvement $\bar{d}$ must also exceed the combined seed noise floor:
-
-$$\bar{d} > \sqrt{\sigma^2_{\text{seed,cand}} + \sigma^2_{\text{seed,base}}}$$
-
-* **Wilcoxon signed-rank:** Reported for reference but **not gating**, because at $n = 5$ subjects its minimum exact two-sided $p$-value is $0.0625$.
-
-Provenance checks (hard fail): LOSO protocol with disjoint subjects, no fitted statistic touching the test subject, >= 3 explicit distinct seeds, reported seeds equal executed seeds, reported mean not above recorded mean, and a bit-exact replay of one run.
 
 ## The 5 injected traps
 
