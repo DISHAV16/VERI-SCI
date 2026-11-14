@@ -42,41 +42,7 @@ How the contract is enforced:
 * The candidate only writes `preprocess_train(X_train, y_train) -> (X, y, transform)` and `build_model(in_channels, n_times)`. **The training loop belongs to the trusted harness**, so the candidate cannot alter optimisation or metrics.
 * The sandbox subprocess receives training data and *unlabeled* test trials. Test labels never leave the parent process; macro-F1 is computed from returned predictions.
 * The harness checks that the test-time `transform` is per-trial consistent, which detects normalisation that peeks at test-set statistics.
-
-## Setup
-
-Python 3.10+.
-
-```bash
-python -m venv .venv
-# Windows: .venv\Scripts\activate      macOS/Linux: source .venv/bin/activate
-pip install -r requirements.txt
-pytest -q                          # tests need no dataset download
-python run_benchmark.py            # downloads EEGBCI subjects 1-5 (runs 4, 8, 12) on first use
-```
-
-Useful flags: `--synthetic` (offline smoke test, **not real results**), `--epochs N`, `--workers N`, `--llm {auto,anthropic,offline}`, `--no-wandb`.
-
-**LLM backend.** With `ANTHROPIC_API_KEY` set (and `pip install anthropic`), the agent uses a real Claude model (override with `VERI_SCI_MODEL`). Without a key it uses a deterministic *offline simulator* with injected coding faults. That path tests the loop end to end, but its Zero-Shot vs Self-Debugging numbers are **not** a measurement of a real LLM. `results_table.md` states which backend produced the numbers.
-
-**Weights & Biases.** If `wandb` is installed, runs log online (with `WANDB_API_KEY`) or in W&B offline mode; every event is also mirrored to `results/wandb_offline_log.jsonl`.
-
-### Docker
-
-```bash
-docker build -f sandbox/Dockerfile -t veri-sci .
-docker run --rm --network none veri-sci pytest -q                       # tests, no network
-docker run --rm -e ANTHROPIC_API_KEY -v "$(pwd)/results:/app/results" veri-sci   # benchmark
-```
-
-The AST guard is defence in depth, not a complete security boundary; run untrusted LLM output inside the container (non-root user, optional `--network none` and `--read-only` once the dataset is cached).
-
-### Package for VS Code
-
-```bash
-python make_zip.py     # writes ../VERI-SCI.zip (source only, no caches or results)
-```
-
+  
 ## Statistical methodology
 
 Unit of analysis = **subject** (n = 5 LOSO folds). Seeds are averaged within each subject first.
@@ -182,8 +148,5 @@ Candidates verified by the gate: **0/15**.
 Limitations: only 5 subjects, so statistical power is low and the Wilcoxon test cannot reach p < 0.05 (minimum exact two-sided p = 0.0625); the paired t-test with Holm-Bonferroni correction is the gating test.
 <!-- BENCHMARK_TABLE_END -->
 
-## Limitations
 
-* Only 5 subjects and 3 seeds, so power is low; a candidate failing the gate may still be a real improvement.
-* Real EEG results require the PhysioNet download; synthetic mode is for software testing only.
 * The paired design uses the first generated candidate of each cycle as the zero-shot outcome and the post-debugging candidate as the self-debugging outcome.
