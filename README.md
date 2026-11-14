@@ -1,4 +1,4 @@
-# VERI-SCI 
+ # VERI-SCI 
  
 **Self-Verifying Autonomous Research Agent & Leakage Auditor for Neural Signal Modeling** 
 
